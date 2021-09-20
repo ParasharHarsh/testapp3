@@ -1,0 +1,107 @@
+<!DOCTYPE
+<html>
+	<head>
+		<script type="text/javascript" src="https://cdns.us1.gigya.com/js/gigya.js?apikey=3_cQkWA59GszKEVKtE0704hqQMGhjNH99ZgJKSpVxonDSA5IE4mVsiPO32QQKPStMo"></script>
+	</head>
+	<script type="text/javascript" lang="javascript">
+	
+		var vcode;
+	
+		function message(){
+				document.getElementById("message").innerHTML = "Logged In Successfully";
+		}
+		
+		function handleUserLogin(res){
+			console.log(res);
+			document.getElementById("message").innerHTML = "Logged In Successfully";
+		}
+		
+		function loginUser(){
+			customButtons: [
+			{
+			"type":"oidc",
+			"providerName":"azureadprovider",
+			"opName":"azureadprovider",
+			"iconURL":"test",
+			"logoURL":"",
+			"lastLoginIconURL":"",
+			"position":1
+			}]
+			gigya.accounts.showScreenSet({
+				screenSet:'Default-RegistrationLogin', 
+				startScreen:'gigya-login-screen',
+				onSubmit: handleUserLogin,
+				customButtons});
+		}
+		
+		function registerUser(myCallback){
+			gigya.accounts.showScreenSet({
+				screenSet:'Default-RegistrationLogin', 
+				startScreen:'gigya-register-screen',
+				redirectURL: 'http://localhost:8080/My-app/',});
+			myCallback(message)	
+		}
+		
+		function handleLogout(res){
+			console.log(res);
+			document.getElementById("message").innerHTML = "Logged Out Successfully";
+			console.log(document.getElementById("message").innerHTML);
+		}
+		
+		function logoutUser(){
+			gigya.accounts.logout({callback:handleLogout});
+		}
+		
+		function handleOTP(res){
+			console.log(res);
+			vcode = res.vToken;
+			console.log(document.getElementById("phone").value);
+		}
+		
+		function handleOTPLogin(res){
+			console.log(res);
+			document.getElementById("otp").innerHTML = "";
+			document.getElementById("phone").innerHTML = "";
+			document.getElementById("message").innerHTML = "Logged in via phone OTP successfully!";
+		}
+		
+		function sendOTP(){
+			var params = {
+			apiKey:"3_cQkWA59GszKEVKtE0704hqQMGhjNH99ZgJKSpVxonDSA5IE4mVsiPO32QQKPStMo",
+			lang:"en",
+			phoneNumber:document.getElementById("phone").value,
+			callback: handleOTP
+			}
+			gigya.accounts.otp.sendCode(params);	
+		}
+		
+		function submitOTP(){
+			var params = {
+			apiKey:"3_cQkWA59GszKEVKtE0704hqQMGhjNH99ZgJKSpVxonDSA5IE4mVsiPO32QQKPStMo",
+			vToken:vcode,
+			code:document.getElementById("otp").value,
+			callback:handleOTPLogin
+			}
+			gigya.accounts.otp.login(params); 
+		}
+	</script>
+	<body>
+		<h1>Welcome to the Test application</h1>
+		<div id="login"><a href="#" onclick="loginUser()">Login</a></div>
+		<div id="register"><a href="#" onclick="registerUser()">Register</a></div>
+		<div id="logout"><a href="#" onclick="logoutUser()">Logout</a></div><br><br>
+		<div id="phoneLogin">
+			<label for="phone">Phone number:</label>
+			<input type="text" id="phone" name="phone"><br><br>
+			<button id="OTPsend" onclick="sendOTP()">Send OTP</button><br><br>
+			
+			<label for="otp">Enter OTP</label>
+			<input type="text" id="otp" name="otp"><br><br>
+			<button id="submitOTP" onclick="submitOTP()">Submit OTP</button>
+		</div><br><br>
+		<div id="pushLogin">
+			<button id="sendPush" onclick="sendPush()">Send Push notification</button><br><br>
+		</div>
+		<div id="message"></div>
+	</body>
+</html>

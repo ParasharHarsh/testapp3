@@ -36,8 +36,7 @@
 		function registerUser(myCallback){
 			gigya.accounts.showScreenSet({
 				screenSet:'Default-RegistrationLogin', 
-				startScreen:'gigya-register-screen',
-				redirectURL: 'http://localhost:8080/My-app/',});
+				startScreen:'gigya-register-screen'});
 			myCallback(message)	
 		}
 		
